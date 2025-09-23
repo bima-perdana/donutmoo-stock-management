@@ -1,28 +1,31 @@
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import Navbar from "./components/navbar";
+import { Routes, Route } from "react-router-dom";
 import DashboardPage from "./pages/DashboardPage";
-import AddPage from "./pages/AddPage";
 import OrderPage from "./pages/OrderPage";
+import OrderDetailPage from "./pages/OrderDetailPage";
+import InputOrderPage from "./pages/InputOrderPage";
+import AddStockPage from "./pages/AddStockPage";
 import StockHistoryPage from "./pages/StockHistoryPage";
 import FormStockOpname from "./pages/FormStockOpname";
-import { DataProvider } from "./context/DataContext"; // ⬅️ tambahin ini
+import ScanPage from "./pages/ScanPage";
+import Navbar from "./components/Navbar"; // ⬅️ pastiin Navbar dipanggil
 
 function App() {
   return (
-    <DataProvider> {/* ⬅️ bungkus semua di sini */}
-      <Router>
-        <Navbar />
-        <div className="p-6">
-          <Routes>
-            <Route path="/" element={<DashboardPage />} />
-            <Route path="/add" element={<AddPage />} />
-            <Route path="/order" element={<OrderPage />} />
-            <Route path="/history/:name" element={<StockHistoryPage />} />
-            <Route path="/opname" element={<FormStockOpname />} />
-          </Routes>
-        </div>
-      </Router>
-    </DataProvider>
+    <div className="min-h-screen bg-gray-50">
+      <Navbar /> {/* ⬅️ taro di atas biar muncul di semua halaman */}
+      <div className="p-4">
+        <Routes>
+          <Route path="/" element={<DashboardPage />} />
+          <Route path="/order" element={<OrderPage />} />
+          <Route path="/order/:id" element={<OrderDetailPage />} />
+          <Route path="/inputorder" element={<InputOrderPage />} />
+          <Route path="/add" element={<AddStockPage />} />
+          <Route path="/history/:name" element={<StockHistoryPage />} />
+          <Route path="/opname" element={<FormStockOpname />} />
+          <Route path="/scan" element={<ScanPage />} />
+        </Routes>
+      </div>
+    </div>
   );
 }
 

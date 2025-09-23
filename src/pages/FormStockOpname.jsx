@@ -1,4 +1,3 @@
-// src/pages/FormStockOpname.jsx
 import { useState } from "react";
 import { format, addDays, subDays } from "date-fns";
 
@@ -34,7 +33,6 @@ const FormStockOpname = () => {
   const today = format(new Date(), "yyyy-MM-dd");
   const [currentDate, setCurrentDate] = useState(today);
 
-  // simpan data opname per tanggal
   const [dataByDate, setDataByDate] = useState({
     [today]: [
       { id: 1, name: "Donat", saldoAwal: "", barangMasuk: "", saldoAkhir: "" },
@@ -86,19 +84,17 @@ const FormStockOpname = () => {
     setDataByDate((prev) => {
       if (!prev[newDate]) {
         if (direction === "next") {
-          // ambil data dari hari sebelumnya (hanya kalau sudah simpan)
           const prevRows = prev[currentDate] || [];
           return {
             ...prev,
             [newDate]: prevRows.map((row) => ({
               ...row,
-              saldoAwal: row.saldoAkhir || "", // saldo akhir kemarin jadi saldo awal
-              barangMasuk: "",                  // reset
-              saldoAkhir: "",                   // reset
+              saldoAwal: row.saldoAkhir || "",
+              barangMasuk: "",
+              saldoAkhir: "",
             })),
           };
         } else {
-          // kalau ke prev tapi belum ada → biarin kosong
           return { ...prev, [newDate]: [] };
         }
       }
@@ -111,84 +107,90 @@ const FormStockOpname = () => {
   const handleSubmit = () => {
     console.log("Data opname tersimpan:", currentDate, rows);
     alert(`Data opname untuk ${currentDate} tersimpan!`);
-    // gak perlu logic tambahan di sini, karena dataByDate udah ke-update onChange
   };
 
   return (
-    <div className="p-6">
+    <div className="p-4 sm:p-6">
       <h2 className="text-xl font-bold mb-4">Form Stock Opname</h2>
 
       {/* navigasi tanggal */}
-      <div className="flex items-center gap-4 mb-4">
-        <button
-          onClick={() => changeDate("prev")}
-          className="px-3 py-1 bg-gray-200 rounded hover:bg-gray-300"
-        >
-          ← Prev
-        </button>
-        <div className="font-semibold">{currentDate}</div>
-        <button
-          onClick={() => changeDate("next")}
-          className="px-3 py-1 bg-gray-200 rounded hover:bg-gray-300"
-        >
-          Next →
-        </button>
-      </div>
-
-      {/* header */}
-      <div className="grid grid-cols-4 font-semibold text-sm bg-gray-100 rounded px-2 py-2 mb-2">
-        <div>Nama Barang</div>
-        <div>Saldo Awal</div>
-        <div>Barang Masuk</div>
-        <div>Saldo Akhir</div>
-      </div>
-
-      {/* baris data */}
-      <div className="space-y-2">
-        {rows.map((row) => (
-          <div
-            key={row.id}
-            className="flex items-center gap-2 border rounded px-2 py-2 hover:bg-gray-50"
+      <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 mb-4">
+        <div className="flex gap-2">
+          <button
+            onClick={() => changeDate("prev")}
+            className="w-full sm:w-auto px-3 py-1 bg-gray-200 rounded hover:bg-gray-300"
           >
-            <div className="grid grid-cols-4 flex-1 gap-2">
-              <EditableCell
-                value={row.name}
-                onChange={(val) => handleChange(row.id, "name", val)}
-              />
-              <EditableCell
-                value={row.saldoAwal}
-                onChange={(val) => handleChange(row.id, "saldoAwal", val)}
-              />
-              <EditableCell
-                value={row.barangMasuk}
-                onChange={(val) => handleChange(row.id, "barangMasuk", val)}
-              />
-              <EditableCell
-                value={row.saldoAkhir}
-                onChange={(val) => handleChange(row.id, "saldoAkhir", val)}
-              />
-            </div>
-            <button
-              onClick={() => deleteRow(row.id)}
-              className="px-2 py-1 bg-red-600 text-white rounded hover:bg-red-700 text-sm"
-            >
-              Hapus
-            </button>
+            ← Prev
+          </button>
+          <button
+            onClick={() => changeDate("next")}
+            className="w-full sm:w-auto px-3 py-1 bg-gray-200 rounded hover:bg-gray-300"
+          >
+            Next →
+          </button>
+        </div>
+        <div className="font-semibold">{currentDate}</div>
+      </div>
+
+      {/* table responsive via overflow */}
+      <div className="overflow-x-auto">
+        <div className="min-w-[640px]">
+          {/* header */}
+          <div className="grid grid-cols-4 font-semibold text-sm bg-gray-100 rounded px-2 py-2 mb-2">
+            <div>Nama Barang</div>
+            <div>Saldo Awal</div>
+            <div>Barang Masuk</div>
+            <div>Saldo Akhir</div>
           </div>
-        ))}
+
+          {/* baris data */}
+          <div className="space-y-2">
+            {rows.map((row) => (
+              <div
+                key={row.id}
+                className="flex items-center gap-2 border rounded px-2 py-2 hover:bg-gray-50"
+              >
+                <div className="grid grid-cols-4 flex-1 gap-2">
+                  <EditableCell
+                    value={row.name}
+                    onChange={(val) => handleChange(row.id, "name", val)}
+                  />
+                  <EditableCell
+                    value={row.saldoAwal}
+                    onChange={(val) => handleChange(row.id, "saldoAwal", val)}
+                  />
+                  <EditableCell
+                    value={row.barangMasuk}
+                    onChange={(val) => handleChange(row.id, "barangMasuk", val)}
+                  />
+                  <EditableCell
+                    value={row.saldoAkhir}
+                    onChange={(val) => handleChange(row.id, "saldoAkhir", val)}
+                  />
+                </div>
+                <button
+                  onClick={() => deleteRow(row.id)}
+                  className="px-2 py-1 bg-red-600 text-white rounded hover:bg-red-700 text-sm"
+                >
+                  Hapus
+                </button>
+              </div>
+            ))}
+          </div>
+        </div>
       </div>
 
       {/* tombol aksi */}
-      <div className="mt-4 flex gap-3">
+      <div className="mt-4 flex flex-col sm:flex-row gap-2">
         <button
           onClick={addRow}
-          className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700"
+          className="w-full sm:w-auto px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700"
         >
           + Tambah Barang
         </button>
         <button
           onClick={handleSubmit}
-          className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+          className="w-full sm:w-auto px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
         >
           Simpan
         </button>

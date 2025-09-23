@@ -1,77 +1,75 @@
 import { createContext, useState } from "react";
+
 export const DataContext = createContext();
 
 export const DataProvider = ({ children }) => {
   const [stocks, setStocks] = useState([]);
+  const [stockHistory, setStockHistory] = useState([]);
   const [orders, setOrders] = useState([]);
-  const [stockCounter, setStockCounter] = useState(1);
-  const [orderCounter, setOrderCounter] = useState(1);
 
   // tambah stock
-  const addStock = (item) => {
+  const addStock = ({ name, quantity, satuan, price }) => {
     const now = new Date();
-    const newItem = {
-      id: stockCounter,
-      date: now.toLocaleDateString("id-ID"),
-      time: now.toLocaleTimeString("id-ID"),
-      ...item,
+
+    // simpan ke history (pakai timestamp utuh)
+    const historyItem = {
+      id: stockHistory.length + 1,
+      name,
+      quantity,
+      satuan,
+      price,
+      timestamp: now, // ⬅️ simpan Date object
     };
-    setStocks((prev) => [...prev, newItem]);
-    setStockCounter((n) => n + 1);
+    setStockHistory((prev) => [...prev, historyItem]);
+
+    // update akumulasi stok
+    setStocks((prev) => {
+      const existing = prev.find((s) => s.name === name);
+      if (existing) {
+        return prev.map((s) =>
+          s.name === name
+            ? {
+                ...s,
+                quantity: s.quantity + quantity,
+                price: s.price + price,
+              }
+            : s
+        );
+      } else {
+        return [
+          ...prev,
+          { id: prev.length + 1, name, quantity, satuan, price },
+        ];
+      }
+    });
   };
 
-  // tambah order (tanpa harga dulu)
-  const addOrder = (item) => {
+  // tambah order
+  const addOrder = ({ name, quantity, satuan }) => {
     const now = new Date();
-    const newOrder = {
-      id: orderCounter,
-      date: now.toLocaleDateString("id-ID"),
-      time: now.toLocaleTimeString("id-ID"),
-      status: "Belum Diproses",
-      price: 0, // harga sementara
-      ...item,
-    };
-    setOrders((prev) => [...prev, newOrder]);
-    setOrderCounter((n) => n + 1);
+    setOrders((prev) => [
+      ...prev,
+      {
+        id: prev.length + 1,
+        name,
+        quantity,
+        satuan,
+        timestamp: now, // simpan Date object juga
+        price: 0,
+        status: "Belum Diproses",
+      },
+    ]);
   };
 
-  // update status order
   const updateOrderStatus = (id, status) => {
     setOrders((prev) =>
-      prev.map((o) =>
-        o.id === id ? { ...o, status } : o
-      )
+      prev.map((o) => (o.id === id ? { ...o, status } : o))
     );
-
-    // kalau status = Diproses → kurangi stock + isi harga
-    if (status === "Diproses") {
-      const orderItem = orders.find((o) => o.id === id);
-      if (!orderItem) return;
-
-      // cari stock barang
-      setStocks((prev) =>
-        prev.map((s) =>
-          s.name === orderItem.name
-            ? { ...s, quantity: s.quantity - orderItem.quantity }
-            : s
-        )
-      );
-
-      // update harga order dari stock
-      const stockItem = stocks.find((s) => s.name === orderItem.name);
-      if (stockItem) {
-        setOrders((prev) =>
-          prev.map((o) =>
-            o.id === id ? { ...o, price: stockItem.price } : o
-          )
-        );
-      }
-    }
   };
 
   return (
     <DataContext.Provider
-      value={{ stocks, addStock, orders, addOrder, updateOrderStatus }}
+      value={{ stocks, stockHistory, addStock, orders, addOrder, updateOrderStatus }}
     >
       {children}
     </DataContext.Provider>

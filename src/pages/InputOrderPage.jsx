@@ -24,56 +24,38 @@ const InputOrderPage = () => {
   };
 
   return (
-    <div className="p-6 border rounded flex flex-col gap-4">
-      <h2 className="text-xl font-bold">Input Order</h2>
+   <div className="card max-w-md mx-auto space-y-4">
+  <h2 className="text-xl font-bold text-gray-800">Input Order</h2>
 
-      {/* ambil nama barang dari daftar stock */}
-      <select
-        name="name"
-        className="input-form"
-        value={form.name}
-        onChange={(e) => {
-          const selectedName = e.target.value;
-          setForm({ ...form, name: selectedName });
+  <select
+    name="name"
+    className="input-form"
+    value={form.name}
+    onChange={(e) => {
+      const selectedName = e.target.value;
+      setForm({ ...form, name: selectedName });
 
-          // auto isi satuan sesuai stock yg dipilih
-          const stockItem = stocks.find((s) => s.name === selectedName);
-          if (stockItem) {
-            setForm((prev) => ({ ...prev, satuan: stockItem.satuan }));
-          }
-        }}
-      >
-        <option value="">-- Pilih Barang --</option>
-        {stocks.map((s) => (
-          <option key={s.id} value={s.name}>
-            {s.name}
-          </option>
-        ))}
-      </select>
+      const stockItem = stocks.find((s) => s.name === selectedName);
+      if (stockItem) {
+        setForm((prev) => ({ ...prev, satuan: stockItem.satuan }));
+      }
+    }}
+  >
+    <option value="">-- Pilih Barang --</option>
+    {stocks.map((s) => (
+      <option key={s.id} value={s.name}>
+        {s.name}
+      </option>
+    ))}
+  </select>
 
-      <input
-        type="number"
-        name="quantity"
-        placeholder="Quantity"
-        className="input-form"
-        value={form.quantity}
-        onChange={handleChange}
-      />
+  <input type="number" name="quantity" placeholder="Quantity" className="input-form" value={form.quantity} onChange={handleChange} />
+  <input type="text" name="satuan" placeholder="Satuan" className="input-form" value={form.satuan} readOnly />
 
-      {/* satuan bisa auto-terisi sesuai stock */}
-      <input
-        type="text"
-        name="satuan"
-        placeholder="Satuan"
-        className="input-form"
-        value={form.satuan}
-        readOnly // biar ga bisa diubah manual
-      />
+  <button className="btn-primary" onClick={handleSubmit}>Tambah Order</button>
+</div>
 
-      <button className="btn-login" onClick={handleSubmit}>
-        Tambah Order
-      </button>
-    </div>
+
   );
 };
 

@@ -6,7 +6,7 @@ const RegisterPage = () => {
   const { register } = useContext(AuthContext);
   const navigate = useNavigate();
 
-  const [form, setForm] = useState({ username: "", password: "" });
+  const [form, setForm] = useState({ username: "", password: "", role: "staff" });
 
   const handleChange = (e) => setForm({ ...form, [e.target.name]: e.target.value });
 

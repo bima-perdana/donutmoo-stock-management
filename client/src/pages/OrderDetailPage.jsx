@@ -1,7 +1,7 @@
 import { useContext } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { DataContext } from "../context/DataContext";
-import { QRCodeCanvas } from "qrcode.react";
+import QRCode from "react-qr-code"; // ganti dari qrcode.react
 
 const OrderDetailPage = () => {
   const { id } = useParams();
@@ -39,7 +39,7 @@ const OrderDetailPage = () => {
       {order.status === "Menunggu Driver" && order.driverCode && (
         <div className="mt-6 flex flex-col items-center text-center">
           <h3 className="font-semibold mb-2">QR Code untuk Driver</h3>
-          <QRCodeCanvas value={order.driverCode} size={180} includeMargin />
+          <QRCode value={order.driverCode} size={180} />
           <div className="text-sm text-gray-600 mt-2">
             Kode: <span className="font-mono">{order.driverCode}</span>
           </div>
@@ -49,7 +49,7 @@ const OrderDetailPage = () => {
       {order.status === "Sedang Diantar" && order.outletCode && (
         <div className="mt-6 flex flex-col items-center text-center">
           <h3 className="font-semibold mb-2">QR Code untuk Outlet</h3>
-          <QRCodeCanvas value={order.outletCode} size={180} includeMargin />
+          <QRCode value={order.outletCode} size={180} />
           <div className="text-sm text-gray-600 mt-2">
             Kode: <span className="font-mono">{order.outletCode}</span>
           </div>

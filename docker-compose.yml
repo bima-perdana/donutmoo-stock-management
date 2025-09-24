@@ -1,0 +1,29 @@
+services:
+  db:
+    image: postgres:14
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: admin123
+      POSTGRES_DB: donutmoo_stock
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+  server:
+    build: ./server
+    ports:
+      - "5000:5000"
+    environment:
+      DB_USER: postgres
+      DB_HOST: db
+      DB_NAME: donutmoo_stock
+      DB_PASS: admin123
+      DB_PORT: 5432
+      JWT_SECRET: supersecretkey
+    depends_on:
+      - db
+
+volumes:
+  pgdata:
